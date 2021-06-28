@@ -103,3 +103,80 @@ INSERT INTO order_items (order_id, product_id, quantity) VALUES(8, 5, 1);
 INSERT INTO order_items (order_id, product_id, quantity) VALUES(9, 13, 2);
 INSERT INTO order_items (order_id, product_id, quantity) VALUES(10, 14, 1);
 INSERT INTO order_items (order_id, product_id, quantity) VALUES(10, 6, 5);
+
+select * from customers;
+
+select * from suppliers;
+
+select c."name", c.address from customers c 
+where c.country = 'United States';
+
+select * from customers c 
+order by c."name" asc;
+
+select * from products p 
+where p.unit_price > 100;
+
+select * from products p 
+where p.product_name like '%socks%';
+
+select * from products p 
+order by p.unit_price desc 
+limit 5;
+
+select p.product_name, p.unit_price, s.supplier_name from products p 
+inner join suppliers s on s.id = p.supplier_id; 
+
+select p.product_name, s.supplier_name from products p 
+inner join suppliers s on s.id = p.supplier_id
+where s.country = 'United Kingdom'; 
+
+select * from orders o 
+WHERE o.customer_id = 1;
+
+select * from orders o 
+inner join customers c on c.id = o.customer_id 
+where c."name" = 'Hope Crosby';
+
+select p.product_name, p.unit_price, oi.quantity from products p 
+inner join order_items oi on oi.product_id = p.id 
+inner join orders o on o.id = oi.order_id 
+where o.order_reference = 'ORD006';
+
+select c."name", o.order_reference, o.order_date, p.product_name, s.supplier_name, oi.quantity from products p 
+inner join suppliers s on s.id = p.supplier_id 
+inner join order_items oi on oi.product_id = p.id 
+inner join orders o on o.id = oi.order_id 
+inner join customers c on c.id = o.customer_id;
+
+select c."name" from customers c 
+inner join orders o on o.customer_id = c.id 
+inner join order_items oi on oi.order_id = o.id 
+inner join products p on p.id = oi.product_id 
+inner join suppliers s on s.id = p.supplier_id 
+where s.country ='China';
+
+--- get the top 5 suppliers who sell the most.
+select s.supplier_name, oi.quantity from suppliers s 
+inner join products p ON p.supplier_id = s.id 
+inner join order_items oi on oi.product_id = p.id 
+inner join orders o on o.id = oi.order_id 
+order by oi.quantity desc 
+limit 5;
+
+--- get top 3 customers that are buying more.
+select c."name", sum(oi.quantity) as total_sale from customers c 
+inner join orders o on o.customer_id = c.id 
+inner join order_items oi on oi.order_id = o.id
+group by c.id 
+order by total_sale desc
+limit 3;
+ 
+--- get the top 2 products that are bought most times. Who is selling those products?
+select p.product_name, s.supplier_name, sum(oi.quantity) as total_sale from products p 
+inner join suppliers s on s.id = p.supplier_id 
+inner join order_items oi on oi.product_id = p.id 
+inner join orders o on o.id = oi.order_id 
+group by p.product_name, s.supplier_name 
+order by total_sale desc
+limit 2;

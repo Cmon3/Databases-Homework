@@ -1,14 +1,9 @@
 const express = require("express");
 const app = express();
 const { Pool } = require('pg');
+const secret = require('./secrets.json');
 
-const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'cyf_ecommerce',
-    password: 'bruno',
-    port: 5432
-});
+const pool = new Pool(secret);
 
 app.get("/hello", function(req, res) {
     res.send("Hello world")
